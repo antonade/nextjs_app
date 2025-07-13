@@ -4,10 +4,19 @@ import { useState } from "react"
 export default function UploadPage() {
   const [message, setMessage] = useState("")
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    const form = e.currentTarget
+    const fileInput = form.elements.namedItem("file") as HTMLInputElement
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      setMessage("No file selected.")
+      return
+    }
+
     const formData = new FormData()
-    formData.append("file", e.target.file.files[0])
+    formData.append("file", fileInput.files[0])
 
     const res = await fetch("/api/upload", {
       method: "POST",
